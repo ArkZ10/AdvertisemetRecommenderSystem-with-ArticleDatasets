@@ -43,24 +43,83 @@ Mencari pengguna dengan profil serupa berdasarkan atribut seperti usia, pendapat
 Mengidentifikasi kesamaan antara iklan berdasarkan pola klik pengguna. Jika pengguna A dan pengguna B memiliki preferensi yang mirip, sistem akan merekomendasikan iklan yang belum dilihat tetapi relevan dengan klik sebelumnya.
 
 ## Data Understanding
-Paragraf awal bagian ini menjelaskan informasi mengenai jumlah data, kondisi data, dan informasi mengenai data yang digunakan. Sertakan juga sumber atau tautan untuk mengunduh dataset. Contoh: [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/Restaurant+%26+consumer+data).
+Dataset yang digunakan dalam proyek ini mencakup data iklan dan data pengguna. Dataset iklan yang dipakai merupakan data artikel yang juga mengsimulasikan iklan, termasuk kategori, judul, dan ID unik setiap artikel. Dataset pengguna mencakup atribut demografi dan perilaku pengguna, seperti usia, pendapatan, dan waktu harian yang dihabiskan di situs. Terdapat data dummy juga yang dibuat untuk mengsimulasikan iklan yang di klik oleh pengguna. Dataset iklan terdiri dari 14 kategori, masing-masing memiliki 300 artikel yang sudah dinormalisasi. Dataset pengguna mencakup 1.000 pengguna yang secara acak memilih 4 artikel sebagai klik mereka.
 
-Selanjutnya, uraikanlah seluruh variabel atau fitur pada data. Sebagai contoh:  
+[Advertisement - Click on Ad dataset](https://www.kaggle.com/datasets/gabrielsantello/advertisement-click-on-ad).
 
-Variabel-variabel pada Restaurant UCI dataset adalah sebagai berikut:
-- accepts : merupakan jenis pembayaran yang diterima pada restoran tertentu.
-- cuisine : merupakan jenis masakan yang disajikan pada restoran.
-- dst
+[News Article Category Dataset](https://www.kaggle.com/datasets/timilsinabimal/newsarticlecategories)
+
+Variabel-variabel dalam dataset
+1. Dataset Iklan
+   - articleId: ID unik untuk setiap artikel.
+   - category: Kategori artikel. 
+   - title: Judul artikel yang menggambarkan konten iklan.
+
+2. Dataset Pengguna
+   - 'Daily Time Spent on Site': consumer time on site in minutes
+   - 'Age': customer age in years
+   - 'Area Income': Avg. Income of geographical area of consumer
+   - 'Daily Internet Usage': Avg. minutes a day consumer is on the internet
+   - 'Ad Topic Line': Headline of the advertisement
+   - 'City': City of consumer
+   - 'Male': Whether or not consumer was male
+   - 'Country': Country of consumer
+   - 'Timestamp': Time at which consumer clicked on Ad or closed window
+   - 'Clicked on Ad': 0 or 1 indicated clicking on Ad
 
 **Rubrik/Kriteria Tambahan (Opsional)**:
-- Melakukan beberapa tahapan yang diperlukan untuk memahami data, contohnya teknik visualisasi data beserta insight atau exploratory data analysis.
+![image](https://github.com/user-attachments/assets/2bb8826a-531e-4a01-b565-c3154a50c4ef)
 
+Dengan melakukan ini, kita dapat memahami kondisi awal dataset, menentukan langkah-langkah preprocessing yang diperlukan (seperti menghapus kolom tidak relevan atau menangani nilai kosong), serta memastikan bahwa data siap untuk digunakan dalam analisis.
+
+     
 ## Data Preparation
-Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dilakukan. Teknik yang digunakan pada notebook dan laporan harus berurutan.
+1. Dataset Artikel (**articlesDF**)
+   - Pembersihan Data
+     Dataset awal artikel berisi informasi tentang judul artikel, kategori, isi artikel (body), dan atribut lainnya. Kolom body dihapus karena tidak relevan untuk sistem rekomendasi yang lebih berfokus pada kategori dan judul artikel.
 
-**Rubrik/Kriteria Tambahan (Opsional)**: 
-- Menjelaskan proses data preparation yang dilakukan
-- Menjelaskan alasan mengapa diperlukan tahapan data preparation tersebut.
+      `articlesDF = articlesDF.drop(columns=['body'], axis=1)`
+   - Distribusi Kategori Data
+     Analisis awal menunjukkan bahwa jumlah artikel per kategori bervariasi. Untuk memastikan keseimbangan dalam sistem rekomendasi, setiap kategori dibatasi hingga 300 artikel menggunakan teknik normalisasi. Hasil normalisasi memastikan bahwa dataset memiliki jumlah artikel yang merata dari setiap kategori.
+
+     `articlesDF = articlesDF.groupby('category', group_keys=False).apply(lambda x: x.sample(min(len(x), 300)))`
+   - Penambahan ID
+     Setiap artikel diberikan ID unik dalam format article_X, di mana X adalah angka urut. Hal ini mempermudah proses pelacakan artikel.
+
+     `articlesDF['articleId'] = ['article_' + str(i) for i in range(1, len(articlesDF) + 1)]`
+
+2. Dataset Pengguna (**usersDF**)
+   - Pembersihan Data
+     Dataset pengguna berisi berbagai atribut, seperti waktu yang dihabiskan di internet, topik iklan, lokasi geografis, dan lainnya. Kolom Daily Internet Usage, Ad Topic Line, City, Male, Country, Timestamp, dan Clicked on Ad dihapus karena tidak relevan dengan sistem rekomendasi.
+
+     `usersDF = usersDF.drop(columns=['Daily Internet Usage', 'Ad Topic Line', 'City', 'Male', 'Country', 'Timestamp', 'Clicked on Ad'], axis=1)`
+   - Penambahan ID
+     Setiap pengguna diberikan ID unik dalam format angka untuk mempermudah identifikasi pengguna.
+
+     `usersDF['userId'] = [i for i in range(1, len(usersDF) + 1)]`
+
+3. Data Dummy: Interaksi Pengguna dengan Artikel (iklan) (**user_article_df**)
+   - Pembuatan Data Dummy
+     Untuk mensimulasikan interaksi antara pengguna dan artikel, setiap pengguna secara acak memilih 4 artikel dari dataset artikel. Data ini disusun dalam format pasangan userId dan articleId
+
+     ```
+     dummy_data = []
+     for user in usersDF["userId"]:
+         chosen_articles = np.random.choice(articlesDF["articleId"], 4, replace=False)
+         for article in chosen_articles:
+             dummy_data.append({"userId": user, "articleId": article})
+             user_article_df = pd.DataFrame(dummy_data)
+     ```
+
+   - Validasi Data Dummy
+     Validasi dilakukan untuk memastikan tidak ada kombinasi user-article yang duplikat. Hasil validasi menunjukkan bahwa setiap kombinasi unik, sehingga data siap digunakan.
+
+     ```
+     unique_counts = user_article_df.value_counts().unique()
+     if len(unique_counts) == 1 and unique_counts[0] == 1:
+         print("Validation passed: No duplicate user-article combinations.")
+     ```
+
 
 ## Modeling
 Tahapan ini membahas mengenai model sisten rekomendasi yang Anda buat untuk menyelesaikan permasalahan. Sajikan top-N recommendation sebagai output.
