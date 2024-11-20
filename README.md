@@ -1,3 +1,5 @@
+# Laporan Proyek Rekomendasi Sistem - Yeftha Joshua Ezekiel
+
 ## Project Overview
 
 Kemajuan teknologi pembelajaran mesin telah memungkinkan model seperti content-based filtering dan collaborative filtering menjadi alat yang sangat efektif dalam merekomendasikan iklan kepada pengguna. Model ini mampu menganalisis data dalam skala besar dengan akurasi tinggi, menghasilkan wawasan yang mendalam tentang preferensi dan perilaku pengguna. Dengan memanfaatkan data seperti kategori konten yang disukai atau pola kesamaan antara pengguna, teknologi ini dapat menyajikan rekomendasi yang lebih relevan, personal, dan sesuai dengan kebutuhan setiap individu, sehingga meningkatkan pengalaman pengguna sekaligus efektivitas pemasaran.
@@ -122,22 +124,104 @@ Dengan melakukan ini, kita dapat memahami kondisi awal dataset, menentukan langk
 
 
 ## Modeling
-Tahapan ini membahas mengenai model sisten rekomendasi yang Anda buat untuk menyelesaikan permasalahan. Sajikan top-N recommendation sebagai output.
+1. Content-Based Filtering
+   
+   Model yang pertama ini membangun sistem rekomendasi berbasis content-based filtering menggunakan model deep learning untuk memprediksi minat pengguna terhadap iklan.
+   - Membangun Model:
+     
+     Input dari preferensi pengguna (user_input) dan kategori artikel (category_input) digabungkan. Lapisan dense dengan aktivasi ReLU memproses data, menghasilkan output probabilitas interaksi.
+   - Persiapan Data:
 
-**Rubrik/Kriteria Tambahan (Opsional)**: 
-- Menyajikan dua solusi rekomendasi dengan algoritma yang berbeda.
-- Menjelaskan kelebihan dan kekurangan dari solusi/pendekatan yang dipilih.
+     Vektor preferensi pengguna diambil dari matriks kategori. Kategori artikel direpresentasikan dalam bentuk satu-hot encoding. Label target (y) ditentukan berdasarkan ada/tidaknya interaksi pengguna dengan kategori.
+   - Pelatihan Model:
+
+     Model dilatih untuk memprediksi apakah pengguna tertarik pada kategori tertentu.
+   - Prediksi dan Rekomendasi:
+
+     Vektor preferensi pengguna baru dibangun berdasarkan artikel yang pernah mereka baca. Artikel yang relevan dievaluasi menggunakan model, dan rekomendasi diurutkan berdasarkan probabilitas tertinggi. Sistem ini menghasilkan daftar rekomendasi personal berdasarkan kesamaan konten iklan dan preferensi pengguna.
+
+2. Collaborative Filtering
+
+   Model yang kedua ini membangun sistem rekomendasi berbasis collaborative filtering menggunakan model deep learning untuk memprediksi minat pengguna terhadap iklan.
+   - Membangun Model:
+     - Input: Fitur pengguna seperti Age, Income, dan Time Spent dimasukkan sebagai input numerik. ID pengguna dan ID artikel dimasukkan ke dalam embedding layer untuk menghasilkan representasi vektor dari kedua entitas.
+     - Embedding Layer: Mengubah ID artikel dan ID user menjadi vektor yang berdimensi rendah.
+     - Dense Layer: Data yang telah digabungkan diproses melalui beberapa lapisan Dense dengan aktivasi ReLU untuk mengekstraksi fitur lebih lanjut.
+     - Output Layer: Lapisan akhir menggunakan sigmoid activation untuk menghasilkan probabilitas apakah pengguna akan berinteraksi dengan artikel tertentu (0 atau 1).
+
+   - Pelatihan Model:
+     - Model dilatih menggunakan binary cross-entropy loss untuk memprediksi apakah pengguna tertarik pada artikel tertentu. Optimasi dilakukan dengan Adam optimizer.
+     - Input Training: ID pengguna, ID artikel, dan fitur pengguna disiapkan sebagai input untuk model.
+
+   - Prediksi dan Rekomendasi:
+     - Normalisasi Fitur Pengguna Baru: Fitur pengguna baru dinormalisasi menggunakan scaler yang sama agar dapat diproses dalam model.
+     - Prediksi Probabilitas: Model digunakan untuk memprediksi probabilitas bahwa pengguna baru tertarik pada setiap artikel.
+     - Pengecualian Artikel yang Sudah Dilihat: Artikel yang sudah pernah dilihat oleh pengguna (berdasarkan input interacted_articles) dikeluarkan dari daftar rekomendasi.
+     - Pengurutan dan Pemilihan Rekomendasi: Artikel yang memiliki probabilitas tertinggi dipilih sebagai rekomendasi teratas.
+
+3. Kelebihan dan kekurangan kedua model
+   
+| Aspek                        | Content-Based Filtering                     | Collaborative Filtering                   |
+|------------------------------|---------------------------------------------|-------------------------------------------|
+| **Cold-Start**               | Baik untuk artikel baru                    | Sulit tanpa interaksi                     |
+| **Eksplorasi Artikel Baru**  | Cenderung merekomendasikan konten serupa    | Lebih beragam karena memanfaatkan pola    |
+| **Bergantung pada Fitur**    | Sangat bergantung                          | Tidak bergantung                          |
+| **Data Interaksi**           | Tidak digunakan                            | Sangat penting                           |
+| **Kompleksitas Model**       | Lebih sederhana                            | Lebih kompleks                            |
+
 
 ## Evaluation
-Pada bagian ini Anda perlu menyebutkan metrik evaluasi yang digunakan. Kemudian, jelaskan hasil proyek berdasarkan metrik evaluasi tersebut.
 
-Ingatlah, metrik evaluasi yang digunakan harus sesuai dengan konteks data, problem statement, dan solusi yang diinginkan.
+Metrik Evaluasi: accuracy dan loss, yang diukur selama proses pelatihan.
 
-**Rubrik/Kriteria Tambahan (Opsional)**: 
-- Menjelaskan formula metrik dan bagaimana metrik tersebut bekerja.
+Accuracy mengukur persentase prediksi yang benar dibandingkan dengan data sebenarnya, mencerminkan efektivitas model dalam membuat rekomendasi yang relevan.
+Loss menunjukkan kesalahan total model selama pelatihan, di mana nilai yang lebih kecil menunjukkan model yang lebih baik dalam mempelajari data.
 
-**---Ini adalah bagian akhir laporan---**
+Metrik ini dipilih karena sesuai dengan konteks proyek:
+- Problem Statement: Metrik ini membantu menentukan apakah rekomendasi yang diberikan relevan dengan preferensi pengguna.
+- Solusi yang Diinginkan: Tingginya nilai akurasi dan rendahnya nilai loss mencerminkan kemampuan model dalam merekomendasikan iklan yang relevan.
 
-_Catatan:_
-- _Anda dapat menambahkan gambar, kode, atau tabel ke dalam laporan jika diperlukan. Temukan caranya pada contoh dokumen markdown di situs editor [Dillinger](https://dillinger.io/), [Github Guides: Mastering markdown](https://guides.github.com/features/mastering-markdown/), atau sumber lain di internet. Semangat!_
-- Jika terdapat penjelasan yang harus menyertakan code snippet, tuliskan dengan sewajarnya. Tidak perlu menuliskan keseluruhan kode project, cukup bagian yang ingin dijelaskan saja.
+**Model Content-Based Filtering**
+| Epoch | Accuracy | Loss   |
+|-------|----------|--------|
+| 1     | 86.62%   | 0.3749 |
+| 2     | 89.69%   | 0.3197 |
+| 3     | 89.19%   | 0.3155 |
+| 4     | 89.06%   | 0.3055 |
+| 5     | 89.71%   | 0.2675 |
+
+- Model berhasil mencapai akurasi 89.71% pada akhir pelatihan, menunjukkan kinerja yang stabil untuk merekomendasikan iklan berbasis preferensi pengguna.
+- Nilai loss yang terus menurun hingga 0.2675 mengindikasikan bahwa model belajar dengan baik dari data, dan prediksinya semakin akurat.
+
+**Model Collaborative Filtering**
+| Epoch | Accuracy | Loss   |
+|-------|----------|--------|
+| 1     | 49.35%   | 0.6941 |
+| 2     | 55.88%   | 0.6851 |
+| 3     | 63.87%   | 0.6389 |
+| 4     | 71.16%   | 0.5644 |
+| 5     | 77.99%   | 0.4701 |
+
+- Model collaborative filtering menunjukkan peningkatan akurasi yang signifikan dari 49.35% (Epoch 1) menjadi 77.99% (Epoch 5).
+- Nilai loss yang menurun hingga 0.4701 mencerminkan kemampuan model untuk menangkap pola interaksi antara pengguna dan artikel dengan lebih baik selama pelatihan.
+
+#### Accuracy
+
+Mengukur persentase prediksi yang benar dari total data. Memberikan gambaran seberapa baik model membuat prediksi yang benar secara keseluruhan. Semakin tinggi, semakin baik performanya.
+
+$$
+\[
+\text{Accuracy} = \frac{\text{Jumlah Prediksi Benar}}{\text{Total Data}}
+\]
+$$
+
+#### Loss
+
+Mengukur seberapa jauh prediksi model dari nilai target sebenarnya. Untuk klasifikasi biner, biasanya digunakan binary crossentropy. Memandu model untuk mengurangi kesalahan dalam prediksi. Semakin kecil nilainya, semakin baik modelnya dalam menyesuaikan data.
+
+$$
+\[
+\text{Loss} = -\frac{1}{N} \sum_{i=1}^N \left( y_i \log(\hat{y}_i) + (1 - y_i) \log(1 - \hat{y}_i) \right)
+\]
+$$
+
