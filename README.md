@@ -4,7 +4,6 @@
 
 Kemajuan teknologi pembelajaran mesin telah memungkinkan model seperti content-based filtering dan collaborative filtering menjadi alat yang sangat efektif dalam merekomendasikan iklan kepada pengguna. Model ini mampu menganalisis data dalam skala besar dengan akurasi tinggi, menghasilkan wawasan yang mendalam tentang preferensi dan perilaku pengguna. Dengan memanfaatkan data seperti kategori konten yang disukai atau pola kesamaan antara pengguna, teknologi ini dapat menyajikan rekomendasi yang lebih relevan, personal, dan sesuai dengan kebutuhan setiap individu, sehingga meningkatkan pengalaman pengguna sekaligus efektivitas pemasaran.
 
-**Rubrik/Kriteria Tambahan (Opsional)**:
 - Proyek ini penting untuk diselesaikan karena sistem rekomendasi iklan yang efektif dapat memberikan nilai tambah yang signifikan bagi pengguna dan bisnis. Bagi pengguna, rekomendasi yang relevan membantu menemukan informasi atau produk yang sesuai dengan kebutuhan mereka tanpa perlu mencarinya secara manual, sehingga meningkatkan pengalaman yang lebih personal dan efisien. Bagi bisnis, sistem ini dapat meningkatkan konversi dan keterlibatan pengguna, mengoptimalkan strategi pemasaran, dan memaksimalkan pendapatan. Dengan menggunakan pendekatan seperti content-based filtering dan collaborative filtering, proyek ini juga menjadi langkah nyata dalam pemanfaatan data secara cerdas untuk mengungkap pola perilaku pengguna yang tidak terlihat secara langsung. Di era digital dengan informasi yang melimpah, keberadaan sistem rekomendasi menjadi solusi penting untuk mengatasi tantangan kelebihan informasi dan memastikan iklan yang ditampilkan tepat sasaran.
 
 Format Referensi:
@@ -29,7 +28,6 @@ Menjelaskan tujuan proyek yang menjawab pernyataan masalah:
 - Menyediakan rekomendasi yang efektif untuk pengguna baru meskipun tidak ada data klik sebelumnya.
 - Meningkatkan pengalaman pengguna dengan menyaring iklan agar lebih relevan dan mengurangi kelebihan informasi.
 
-**Rubrik/Kriteria Tambahan (Opsional)**:
 
 ### Solution statements
 
@@ -45,19 +43,35 @@ Mencari pengguna dengan profil serupa berdasarkan atribut seperti usia, pendapat
 Mengidentifikasi kesamaan antara iklan berdasarkan pola klik pengguna. Jika pengguna A dan pengguna B memiliki preferensi yang mirip, sistem akan merekomendasikan iklan yang belum dilihat tetapi relevan dengan klik sebelumnya.
 
 ## Data Understanding
-Dataset yang digunakan dalam proyek ini mencakup data iklan dan data pengguna. Dataset iklan yang dipakai merupakan data artikel yang juga mengsimulasikan iklan, termasuk kategori, judul, dan ID unik setiap artikel. Dataset pengguna mencakup atribut demografi dan perilaku pengguna, seperti usia, pendapatan, dan waktu harian yang dihabiskan di situs. Terdapat data dummy juga yang dibuat untuk mengsimulasikan iklan yang di klik oleh pengguna. Dataset iklan terdiri dari 14 kategori, masing-masing memiliki 300 artikel yang sudah dinormalisasi. Dataset pengguna mencakup 1.000 pengguna yang secara acak memilih 4 artikel sebagai klik mereka.
+Dataset yang digunakan dalam proyek ini mencakup data iklan dan data pengguna. Dataset iklan yang dipakai merupakan data artikel yang juga mengsimulasikan iklan, termasuk kategori, judul, dan ID unik setiap artikel. Dataset pengguna mencakup atribut demografi dan perilaku pengguna, seperti usia, pendapatan, dan waktu harian yang dihabiskan di situs. Terdapat data dummy juga yang dibuat untuk mengsimulasikan iklan yang di klik oleh pengguna. Dataset iklan terdiri dari 14 kategori, masing-masing memiliki 300 artikel yang sudah dinormalisasi. Dataset pengguna mencakup 1.000 pengguna yang secara acak memilih 4 artikel sebagai klik mereka. 
+
+SUMBER DATA:
 
 [Advertisement - Click on Ad dataset](https://www.kaggle.com/datasets/gabrielsantello/advertisement-click-on-ad).
 
 [News Article Category Dataset](https://www.kaggle.com/datasets/timilsinabimal/newsarticlecategories)
 
 Variabel-variabel dalam dataset
-1. Dataset Iklan
+1. Dataset Iklan (`(6877, 3)`)
    - articleId: ID unik untuk setiap artikel.
-   - category: Kategori artikel. 
+   - category: Kategori artikel.
+     - ARTS AND CULTURE: 1002
+     - BUSINESS: 501
+     - COMEDY: 380
+     - CRIME: 300
+     - EDUCATION: 490
+     - ENTERTAINMENT: 501
+     - ENVIRONMENT: 501
+     - MEDIA: 347
+     - POLITICS: 501
+     - RELIGION: 501
+     - SCIENCE: 350
+     - SPORTS: 501
+     - TECH: 501
+     - WOMEN: 501
    - title: Judul artikel yang menggambarkan konten iklan.
 
-2. Dataset Pengguna
+2. Dataset Pengguna (`(1000,10)`)
    - 'Daily Time Spent on Site': consumer time on site in minutes
    - 'Age': customer age in years
    - 'Area Income': Avg. Income of geographical area of consumer
@@ -68,11 +82,13 @@ Variabel-variabel dalam dataset
    - 'Country': Country of consumer
    - 'Timestamp': Time at which consumer clicked on Ad or closed window
    - 'Clicked on Ad': 0 or 1 indicated clicking on Ad
+  
+3. Kondisi Data
+   Data yang diambil pada opensource kaggle tidak ada missing value, duplikat, ataupun outlier. 
 
-**Rubrik/Kriteria Tambahan (Opsional)**:
 ![image](https://github.com/user-attachments/assets/2bb8826a-531e-4a01-b565-c3154a50c4ef)
 
-Dengan melakukan ini, kita dapat memahami kondisi awal dataset, menentukan langkah-langkah preprocessing yang diperlukan (seperti menghapus kolom tidak relevan atau menangani nilai kosong), serta memastikan bahwa data siap untuk digunakan dalam analisis.
+Dataset articlesDF memiliki 6,877 entri dengan 3 kolom (category, title, dan body), di mana kolom body memiliki 1 nilai kosong yang perlu ditangani, sementara kolom lainnya lengkap dan siap digunakan. Dataset ini menggunakan memori sebesar 161.3 KB, dan jika ada ketidakseimbangan jumlah artikel antar kategori, normalisasi data dapat diterapkan. Dataset usersDF berisi 1,000 entri dengan 10 kolom, di mana beberapa kolom seperti Ad Topic Line, City, Country, dan Timestamp kemungkinan tidak relevan untuk sistem rekomendasi sehingga dapat dihapus, sementara kolom numerik seperti Daily Time Spent on Site, Age, dan Area Income dapat dinormalisasi untuk meningkatkan performa model. Dengan semua kolom lengkap tanpa nilai kosong dan ukuran dataset yang kecil (78.2 KB), kedua dataset cukup ringan dan siap diproses setelah dilakukan pembersihan dan normalisasi.
 
      
 ## Data Preparation
@@ -122,44 +138,153 @@ Dengan melakukan ini, kita dapat memahami kondisi awal dataset, menentukan langk
          print("Validation passed: No duplicate user-article combinations.")
      ```
 
+4. Membuat Matriks Interaksi Kategori Pengguna
+   - Gabungan Data
+
+     Data interaksi pengguna-artikel (user_article_df) digabungkan dengan dataset artikel (articlesDF) berdasarkan kolom articleId.
+
+     `interactions_df = user_article_df.merge(articlesDF, on='articleId')`
+   - Grup dan Unstack
+
+     Matriks interaksi dibuat menggunakan teknik pengelompokan berdasarkan userId dan kategori artikel (category):
+     Setiap sel pada matriks berisi jumlah artikel yang diakses pengguna dalam kategori tertentu. Matriks diisi dengan 0 jika tidak ada interaksi pada kategori tersebut.
+   
+     `user_category_matrix = interactions_df.groupby(["userId", "category"]).size().unstack(fill_value=0)`
+
+
 
 ## Modeling
-1. Content-Based Filtering
-   
-   Model yang pertama ini membangun sistem rekomendasi berbasis content-based filtering menggunakan model deep learning untuk memprediksi minat pengguna terhadap iklan.
-   - Membangun Model:
-     
-     Input dari preferensi pengguna (user_input) dan kategori artikel (category_input) digabungkan. Lapisan dense dengan aktivasi ReLU memproses data, menghasilkan output probabilitas interaksi.
-   - Persiapan Data:
+### Content-Based Filtering
 
-     Vektor preferensi pengguna diambil dari matriks kategori. Kategori artikel direpresentasikan dalam bentuk satu-hot encoding. Label target (y) ditentukan berdasarkan ada/tidaknya interaksi pengguna dengan kategori.
-   - Pelatihan Model:
+#### Cara Kerja Content-Based Filtering
+Model ini memprediksi apakah seorang pengguna akan berinteraksi dengan kategori tertentu (output biner: 0 atau 1). Model menggunakan dua input utama:
+1. **Preferensi Pengguna (X_user)**: Representasi preferensi pengguna terhadap berbagai kategori artikel, yang didapatkan dari data historis interaksi.
+2. **Vektor Kategori (X_category)**: One-hot encoding yang menunjukkan kategori artikel tertentu.
 
-     Model dilatih untuk memprediksi apakah pengguna tertarik pada kategori tertentu.
-   - Prediksi dan Rekomendasi:
+Dengan menggabungkan kedua input tersebut melalui **layer Concatenate**, model belajar memahami hubungan antara preferensi pengguna dan kategori artikel untuk memprediksi interaksi.
 
-     Vektor preferensi pengguna baru dibangun berdasarkan artikel yang pernah mereka baca. Artikel yang relevan dievaluasi menggunakan model, dan rekomendasi diurutkan berdasarkan probabilitas tertinggi. Sistem ini menghasilkan daftar rekomendasi personal berdasarkan kesamaan konten iklan dan preferensi pengguna.
+#### Detail Arsitektur Model dan Parameternya
+**1. Input Layers**
+- **`user_input`**: Vektor panjang `num_categories`, berisi nilai yang mewakili preferensi pengguna terhadap setiap kategori.
+- **`category_input`**: Vektor panjang `num_categories`, berupa one-hot encoding dari kategori artikel.
+- **Parameter**: Panjang input (`shape=(num_categories,)`) didasarkan pada jumlah kategori dalam dataset.
+- **`X_user`**: Dibangun dari `user_category_matrix`, yang memuat informasi historis preferensi pengguna terhadap berbagai kategori. Jika data pengguna tidak tersedia, input diisi dengan nol.
+- **`X_category`**: Vektor one-hot encoding untuk setiap kategori, menunjukkan kategori spesifik yang sedang diproses.
+- **`y`**: Target output berupa **1** jika pengguna berinteraksi dengan kategori (berdasarkan `interactions_df`) dan **0** jika tidak.
 
-2. Collaborative Filtering
+**2. Concatenate Layer**
+- Menggabungkan kedua input (`user_input` dan `category_input`) menjadi satu vektor panjang `2 * num_categories`. 
+- **Tujuan**: Memberikan model informasi terintegrasi tentang pengguna dan kategori yang sedang diproses.
 
-   Model yang kedua ini membangun sistem rekomendasi berbasis collaborative filtering menggunakan model deep learning untuk memprediksi minat pengguna terhadap iklan.
-   - Membangun Model:
-     - Input: Fitur pengguna seperti Age, Income, dan Time Spent dimasukkan sebagai input numerik. ID pengguna dan ID artikel dimasukkan ke dalam embedding layer untuk menghasilkan representasi vektor dari kedua entitas.
-     - Embedding Layer: Mengubah ID artikel dan ID user menjadi vektor yang berdimensi rendah.
-     - Dense Layer: Data yang telah digabungkan diproses melalui beberapa lapisan Dense dengan aktivasi ReLU untuk mengekstraksi fitur lebih lanjut.
-     - Output Layer: Lapisan akhir menggunakan sigmoid activation untuk menghasilkan probabilitas apakah pengguna akan berinteraksi dengan artikel tertentu (0 atau 1).
+**3. Hidden Layers**
+- **`Dense(64, activation='relu')`**:
+  - Lapisan pertama dengan 64 neuron dan fungsi aktivasi **ReLU** (Rectified Linear Unit).
+  - **Fungsi**: Mengekstraksi hubungan non-linear antara preferensi pengguna dan kategori.
+- **`Dense(32, activation='relu')`**:
+  - Lapisan kedua dengan 32 neuron.
+  - **Fungsi**: Mengurangi dimensi data dan menyaring informasi untuk mendekati keputusan akhir.
 
-   - Pelatihan Model:
-     - Model dilatih menggunakan binary cross-entropy loss untuk memprediksi apakah pengguna tertarik pada artikel tertentu. Optimasi dilakukan dengan Adam optimizer.
-     - Input Training: ID pengguna, ID artikel, dan fitur pengguna disiapkan sebagai input untuk model.
+**4. Output Layer**
+- **`Dense(1, activation='sigmoid')`**:
+  - Lapisan terakhir dengan 1 neuron dan fungsi aktivasi sigmoid.
+  - **Fungsi**: Menghasilkan probabilitas (antara 0 dan 1) yang menunjukkan kemungkinan interaksi pengguna dengan kategori tertentu.
 
-   - Prediksi dan Rekomendasi:
-     - Normalisasi Fitur Pengguna Baru: Fitur pengguna baru dinormalisasi menggunakan scaler yang sama agar dapat diproses dalam model.
-     - Prediksi Probabilitas: Model digunakan untuk memprediksi probabilitas bahwa pengguna baru tertarik pada setiap artikel.
-     - Pengecualian Artikel yang Sudah Dilihat: Artikel yang sudah pernah dilihat oleh pengguna (berdasarkan input interacted_articles) dikeluarkan dari daftar rekomendasi.
-     - Pengurutan dan Pemilihan Rekomendasi: Artikel yang memiliki probabilitas tertinggi dipilih sebagai rekomendasi teratas.
+**5. Model Compilation**
+- **Optimizer**: `adam`
+  - Algoritma optimasi adaptif yang efisien untuk memperbarui bobot berdasarkan gradien error.
+- **Loss Function**: `binary_crossentropy`
+  - Fungsi loss untuk klasifikasi biner, menghitung perbedaan antara prediksi dan label aktual.
+- **Metric**: `accuracy`
+  - Metrik evaluasi untuk melacak akurasi selama pelatihan.
 
-3. Kelebihan dan kekurangan kedua model
+
+Hasil Top N Recommendations:
+- Article: Anderson Cooper Shreds Trump: ‘He Went To Play Golf While They Held Funerals’ (ID: article_2101, PROB: 0.57)
+- Article: How Many Times Can Wolf Blitzer Avoid Saying 'Shithole'? (ID: article_2102, PROB: 0.57)
+- Article: Parents Of Slain DNC Staffer Seth Rich Sue Fox News Over Fake News Story (ID: article_2103, PROB: 0.57)
+- Article: Media Euphemisms For 'Racist' Are Stupidly Tinged (ID: article_2104, PROB: 0.57)
+- Article: Ted Cruz Makes It Too Easy To Point Out The Hypocrisy Of His Latest Campaign Ad (ID: article_2105, PROB: 0.57)
+
+
+
+
+### Collaborative Filtering
+
+#### **Cara Kerja Collaborative Filtering**
+Model ini memprediksi apakah seorang pengguna akan berinteraksi dengan sebuah artikel berdasarkan:
+1. **Embeddings**:
+   - Menggunakan embedding untuk mewakili pengguna dan artikel dalam ruang vektor berdimensi rendah, sehingga dapat menangkap pola hubungan yang kompleks.
+2. **Fitur Tambahan**:
+   - Fitur tambahan dari pengguna seperti **usia**, **pendapatan**, dan **waktu yang dihabiskan di situs** digunakan untuk memperkaya representasi pengguna.
+
+Model ini menggunakan tiga input utama:
+1. **ID pengguna (`user_id`)**
+2. **ID artikel (`article_id`)**
+3. **Fitur tambahan pengguna (`user_features`)**
+
+
+#### **Detail Arsitektur Model dan Parameternya**
+
+**1. Normalisasi Data**
+- **`MinMaxScaler`**:
+  - Fitur tambahan pengguna (`Daily Time Spent on Site`, `Age`, `Area Income`) dinormalisasi ke rentang [0, 1].
+  - **Tujuan**: Meningkatkan stabilitas pelatihan model dan mempercepat konvergensi.
+
+**2. Representasi Data**
+- **Artikel**:
+  - Setiap artikel diberikan **indeks unik** menggunakan `article_to_idx`.
+- **Interaksi**:
+  - Dibangun matriks interaksi biner (`interactions_matrix`), di mana nilai **1** menunjukkan adanya interaksi antara pengguna dan artikel.
+
+**3. Embedding Layers**
+- **User Embedding (`user_embedding`)**:
+  - Dimensi input: `num_users`
+  - Dimensi output: `embedding_dim=50`
+  - **Fungsi**: Mengonversi ID pengguna ke representasi vektor berdimensi rendah.
+- **Article Embedding (`article_embedding`)**:
+  - Dimensi input: `num_articles`
+  - Dimensi output: `embedding_dim=50`
+  - **Fungsi**: Mengonversi ID artikel ke representasi vektor berdimensi rendah.
+- **Flatten**:
+  - Embedding diratakan agar dapat digabungkan dengan input lain.
+
+**4. Fitur Tambahan**
+- **`user_features`**:
+  - Fitur tambahan pengguna: **usia, pendapatan, waktu di situs**.
+  - Langsung digabungkan dengan embedding pengguna dan artikel menggunakan layer **Concatenate**.
+
+**5. Hidden Layers**
+- **Dense Layer (32 Neurons)**:
+  - Aktivasi: **ReLU**
+  - **Fungsi**: Mengekstraksi hubungan non-linear antara embedding pengguna, embedding artikel, dan fitur tambahan.
+- **Dense Layer (16 Neurons)**:
+  - Aktivasi: **ReLU**
+  - **Fungsi**: Menyaring informasi sebelum ke layer output.
+
+**6. Output Layer**
+- **Dense (1 Neuron)**:
+  - Aktivasi: **Sigmoid**
+  - **Fungsi**: Menghasilkan probabilitas interaksi (nilai antara 0 dan 1).
+
+**7. Model Compilation**
+- **Optimizer**: `adam`
+  - Digunakan untuk mengoptimalkan bobot model dengan adaptasi pembelajaran.
+- **Loss Function**: `binary_crossentropy`
+  - Mengukur kesalahan prediksi pada klasifikasi biner.
+- **Metric**: `accuracy`
+  - Digunakan untuk memantau kinerja model selama pelatihan.
+
+
+Hasil Top N Recommendations:
+- Article ID: article_1889, Title: UN Climate Talks May Only Bring Moderate Progress As Rich Nations Worry About Economy
+- Article ID: article_2306, Title: Tucker Carlson Turns On Trump: 'Imagine If Barack Obama Had Said That'
+- Article ID: article_2888, Title: When Patriotism Becomes Idolatry
+- Article ID: article_1049, Title: Cops Explain How To Pull Off A Good Halloween Prank Without Getting Arrested
+- Article ID: article_815, Title: 'Late Night' Writer's Breathless Royal Wedding Recap Is The Only One You Need
+
+
+
+### Kelebihan dan kekurangan kedua model
    
 | Aspek                        | Content-Based Filtering                     | Collaborative Filtering                   |
 |------------------------------|---------------------------------------------|-------------------------------------------|
@@ -210,9 +335,7 @@ Metrik ini dipilih karena sesuai dengan konteks proyek:
 Mengukur persentase prediksi yang benar dari total data. Memberikan gambaran seberapa baik model membuat prediksi yang benar secara keseluruhan. Semakin tinggi, semakin baik performanya.
 
 $$
-\[
 \text{Accuracy} = \frac{\text{Jumlah Prediksi Benar}}{\text{Total Data}}
-\]
 $$
 
 #### Loss
@@ -220,8 +343,6 @@ $$
 Mengukur seberapa jauh prediksi model dari nilai target sebenarnya. Untuk klasifikasi biner, biasanya digunakan binary crossentropy. Memandu model untuk mengurangi kesalahan dalam prediksi. Semakin kecil nilainya, semakin baik modelnya dalam menyesuaikan data.
 
 $$
-\[
 \text{Loss} = -\frac{1}{N} \sum_{i=1}^N \left( y_i \log(\hat{y}_i) + (1 - y_i) \log(1 - \hat{y}_i) \right)
-\]
 $$
 
